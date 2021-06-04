@@ -1,63 +1,64 @@
 ########################### Import
 
-import pandas as pd
 
-########################### Paramètres à renseigner (méthode input) :
+import matplotlib.pyplot as plt
+import numpy as np
 
-# ## Conditions ambiantes
-# Ta = float(input("Température ambiante (Kelvin) "))
-# Pa = float(input("Pression ambiante (bar) "))
-# ## Chambre combustion et compresseur
-# r = float(input("Ratio compression "))
-# TB = float(input("Température chambre combustion (Kelvin) "))
-# ## Rendements composants
-# NC = float(input("Rendement isentropique interne compresseur "))
-# NT = float(input("Rendement isentropique interne turibne "))
-# NM = float(input("Rendement mécanique "))
-# NB = float(input("Rendement combustion "))
-# NE = float(input("Rendement échangeur chaleur "))
-# ## Pertes de pression
-# dPB = float(input("Pertes de charges chambre combustion "))
-# dPEa = float(input("Pertes de charges échangeur chaleur, côté air frais "))
-# dPEg = float(input("Pertes de charges échangeur chaleur, côté air gaz chauds "))
 
-interface_xl = 'Interface.xlsx'
-user = pd.read_excel(interface_xl, sheet_name="user")
+########################### Affichage des résultats via la console
 
-sequence_table = user["Séquence"].tolist()
-sequence_table = [x for x in sequence_table if pd.isnull(x) == False]      # Supprimer les nan de la liste
 
-python = pd.read_excel(interface_xl, sheet_name="python")
+def affichage_console(simulation,sequence_table):
+    indice = 0
+    dash = "-" * 99
+    for i in range(2) :
+        print(dash)
+        if indice == 0 :
+            print("{:^50}".format("Performances sans EC : ".upper()))
+        else :
+            print("{:^50}".format("Performances avec EC : ".upper()))
+        print('{:<30s}{:>10s}{:>20s}'.format("Composant", "Pression", "Température"))
+        print(dash)
+        for j in range(len(sequence_table)):
+            code_element = sequence_table[j]
+            if code_element == 1:
+                element = "Compresseur"
+            elif code_element == 2:
+                element = "Chambre combustion"
+            elif code_element == 3:
+                element = "Turbine"
+            elif code_element == 4.1 and indice == 1 :
+                element = "EC - coté air frais"
+            elif code_element == 4.2 and indice == 1 :
+                element = "EC - coté gaz chauds"
+            if indice == 0 and code_element not in [4.1,4.2]:
+                print("{:<30s}{:>10.2f}{:>20.2f}".format(element, simulation.air_table_sans_EC[code_element][1].pression,
+                                        simulation.air_table_sans_EC[code_element][1].temperature))
+            elif indice == 1:
+                print("{:<30s}{:>10.2f}{:>20.2f}".format(element, simulation.air_table_avec_EC[code_element][1].pression,
+                                        simulation.air_table_avec_EC[code_element][1].temperature))
+        print("")
+        if indice == 0 :
+            print(simulation.performance_sans_EC)
+            indice = 1
+        else :
+            print(simulation.performance_avec_EC)
 
-air_exterieur_table = python["Air exterieur"].tolist()
-air_exterieur_table = [x for x in air_exterieur_table if pd.isnull(x) == False]
 
-compresseur_table = python["Compresseur"].tolist()
-compresseur_table = [x for x in compresseur_table if pd.isnull(x) == False]
-
-combustion_table = python["Chambre de combustion"].tolist()
-combustion_table = [x for x in combustion_table if pd.isnull(x) == False]
-
-turbine_table = python["Turbine"].tolist()
-turbine_table = [x for x in turbine_table if pd.isnull(x) == False]
-
-echangeur_table = python["Échangeur de chaleur"].tolist()
-echangeur_table = [x for x in echangeur_table if pd.isnull(x) == False]
-
-########################### Paramètres extraits de l'interface XL :
-# ## Conditions ambiantes
-# Pa = float(air_exterieur_table[0])
-# Ta = float(air_exterieur_table[1])
-# ## Chambre combustion et compresseur
-# r = float(compresseur_table[0])
-# TB = float(combustion_table[0])
-# ## Rendements composants
-# NC = float(compresseur_table[2])
-# NT = float(turbine_table[0])
-# NM = float(compresseur_table[1])
-# NB = float(combustion_table[1])
-# NE = float(echangeur_table[0])
-# ## Pertes de pression
-# dPB = float(combustion_table[2])
-# dPEa = float(echangeur_table[1])
-# dPEg = float(echangeur_table[2])
+# def affichage_graphique(simulation):
+#     labels = ["Sans EC","Avec EC"]
+#     SWO = [simulation.performance_sans_EC.puissance_specifique_sortie,simulation.performance_avec_EC.puissance_specifique_sortie]
+#     SFC = [simulation.performance_sans_EC.sfc*100,simulation.performance_avec_EC.sfc*100]
+#     rendement = [simulation.performance_sans_EC.rendement*100,simulation.performance_avec_EC.rendement*100]
+#
+#     plt.figure(4)
+#     plt.subplot(311)
+#     data = [23, 45, 56, 78, 213]
+#     plt.bar([1, 2, 3, 4, 5], data)
+#     plt.subplot(212)
+#     data = [23, 45, 56, 78, 213]
+#     plt.bar([1, 2, 3, 4, 5], data)
+#     plt.subplot(213)
+#     data = [23, 45, 56, 78, 213]
+#     plt.bar([1, 2, 3, 4, 5], data)
+#     plt.show()

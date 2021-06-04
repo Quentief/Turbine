@@ -1,6 +1,8 @@
 ########################### Import
 
+
 import pandas as pd
+
 
 ########################### Calculs des propriétés de l'air
 
@@ -22,3 +24,29 @@ far_bornes2A_far = {far["inlet air temperature (K)"].tolist()[i] : far["fuel/air
 far_bornes2B_temperature = {far["inlet air temperature (K)"].tolist()[i] : far["temperature rise bornes 2B (K)"][i] for i in range(nbre_lignes_far)}
 far_bornes2B_far = {far["inlet air temperature (K)"].tolist()[i] : far["fuel/air ratio borne 2B"][i] for i in range(nbre_lignes_far)}
 
+
+########################### Extraction du paramétrage du système depuis l'Excel Interface
+
+
+interface_xl = 'Interface.xlsx'
+user = pd.read_excel(interface_xl, sheet_name="user")
+
+sequence_table = user["Séquence"].tolist()
+sequence_table = [x for x in sequence_table if pd.isnull(x) == False]      # Supprimer les nan de la liste
+
+python = pd.read_excel(interface_xl, sheet_name="python")
+
+air_exterieur_table = python["Air exterieur"].tolist()
+air_exterieur_table = [x for x in air_exterieur_table if pd.isnull(x) == False]
+
+compresseur_table = python["Compresseur"].tolist()
+compresseur_table = [x for x in compresseur_table if pd.isnull(x) == False]
+
+combustion_table = python["Chambre de combustion"].tolist()
+combustion_table = [x for x in combustion_table if pd.isnull(x) == False]
+
+turbine_table = python["Turbine"].tolist()
+turbine_table = [x for x in turbine_table if pd.isnull(x) == False]
+
+echangeur_table = python["Échangeur de chaleur"].tolist()
+echangeur_table = [x for x in echangeur_table if pd.isnull(x) == False]
