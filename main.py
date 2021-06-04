@@ -2,8 +2,7 @@
 
 # pip install pandas
 # pip install openpyxl
-# python -m pip install -U pip
-# python -m pip install -U matplotlib
+
 
 from controller import start
 
