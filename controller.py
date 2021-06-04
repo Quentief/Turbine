@@ -4,7 +4,7 @@
 from model import proprietes_air, gamma_table, cp_table, far_bornes1A_temperature, far_bornes1B_temperature, \
     far_bornes1A_far, far_bornes1B_far, far_bornes2A_temperature, far_bornes2B_temperature, far_bornes2A_far, \
     far_bornes2B_far, air_exterieur_table, compresseur_table, combustion_table, turbine_table, echangeur_table, \
-    sequence_table
+    sequence_table_1
 
 
 from view import affichage_console
@@ -152,7 +152,7 @@ class Simulation :
         for i in range(3) :
             for j in range(len(sequence_table)):
                 code_element = sequence_table[j]
-                if code_element == 1:
+                if code_element == 1 or code_element == 5.1 :
                     compresseur = Compresseur(air_entree_table[1], compresseur_table[0], compresseur_table[2],
                                           compresseur_table[1])
                     air_sortie_element = compresseur.air_sortie
@@ -174,6 +174,7 @@ class Simulation :
                         else :
                             air_sortie_element = echangeur.gaz_entree
                             air_sortie_table[sequence_table[j-1]] = air_sortie_element
+                #elif code_element == 5.1 :
                 if j < len(sequence_table) - 1 :
                     air_sortie_table[code_element] = air_sortie_element
                     air_entree_table[sequence_table[j + 1]] = air_sortie_element
@@ -195,8 +196,8 @@ class Simulation :
 
 
 def start():
-    simulation = Simulation(sequence_table, air_exterieur_table, compresseur_table,
+    simulation = Simulation(sequence_table_1, air_exterieur_table, compresseur_table,
                             combustion_table, turbine_table, echangeur_table)
-    affichage_console(simulation,sequence_table)
+    affichage_console(simulation, sequence_table_1)
 
 
