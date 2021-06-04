@@ -10,9 +10,9 @@ def affichage_console(simulation,sequence_table):
     for i in range(2) :
         print(dash)
         if indice == 0 :
-            print("{:^50}".format("Performances sans EC : ".upper()))
+            print("{:^50}".format("Performances sans Échangeur Chaleur : ".upper()))
         else :
-            print("{:^50}".format("Performances avec EC : ".upper()))
+            print("{:^50}".format("Performances avec Échangeur Chaleur : ".upper()))
         print('{:<31s}{:>13s}{:>23s}'.format("Composant", "Pression", "Température"))
         print(dash)
         for j in range(len(sequence_table)):
