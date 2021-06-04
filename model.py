@@ -31,8 +31,8 @@ far_bornes2B_far = {far["inlet air temperature (K)"].tolist()[i] : far["fuel/air
 interface_xl = 'Interface.xlsx'
 user = pd.read_excel(interface_xl, sheet_name="user")
 
-sequence_table = user["Séquence"].tolist()
-sequence_table = [x for x in sequence_table if pd.isnull(x) == False]      # Supprimer les nan de la liste
+sequence_table_1 = user["Séquence 1"].tolist()
+sequence_table_1 = [x for x in sequence_table_1 if pd.isnull(x) == False]      # Supprimer les nan de la liste
 
 python = pd.read_excel(interface_xl, sheet_name="python")
 
