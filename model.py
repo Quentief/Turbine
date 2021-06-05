@@ -1,8 +1,6 @@
 ########################### Import
 
-
 import pandas as pd
-
 
 ########################### Calculs des propriétés de l'air
 
@@ -27,26 +25,50 @@ far_bornes2B_far = {far["inlet air temperature (K)"].tolist()[i] : far["fuel/air
 
 ########################### Extraction du paramétrage du système depuis l'Excel Interface
 
+class Parametrage :
+    pass
+
+parametrage1 = Parametrage()
+parametrage2 = Parametrage()
+
 
 interface_xl = 'Interface.xlsx'
 user = pd.read_excel(interface_xl, sheet_name="user")
 
-sequence_table_1 = user["Séquence 1"].tolist()
-sequence_table_1 = [x for x in sequence_table_1 if pd.isnull(x) == False]      # Supprimer les nan de la liste
+sequence1 = user["Séquence 1"].tolist()
+sequence1 = [x for x in sequence1 if pd.isnull(x) == False]      # Supprimer les nan de la liste
+sequence2 = user["Séquence 2"].tolist()
+sequence2 = [x for x in sequence2 if pd.isnull(x) == False]
 
-python = pd.read_excel(interface_xl, sheet_name="python")
+python1 = pd.read_excel(interface_xl, sheet_name="python 1")
+python2 = pd.read_excel(interface_xl, sheet_name="python 2")
 
-air_exterieur_table = python["Air exterieur"].tolist()
-air_exterieur_table = [x for x in air_exterieur_table if pd.isnull(x) == False]
+parametrage1.air_exterieur_table = python1["Air exterieur"].tolist()
+parametrage1.air_exterieur_table  = [x for x in parametrage1.air_exterieur_table if pd.isnull(x) == False]
+parametrage2.air_exterieur_table = python2["Air exterieur"].tolist()
+parametrage2.air_exterieur_table  = [x for x in parametrage2.air_exterieur_table if pd.isnull(x) == False]
 
-compresseur_table = python["Compresseur"].tolist()
-compresseur_table = [x for x in compresseur_table if pd.isnull(x) == False]
+parametrage1.compresseur_table = python1["Compresseur"].tolist()
+parametrage1.compresseur_table = [x for x in parametrage1.compresseur_table if pd.isnull(x) == False]
+parametrage2.compresseur_table = python2["Compresseur"].tolist()
+parametrage2.compresseur_table = [x for x in parametrage2.compresseur_table if pd.isnull(x) == False]
 
-combustion_table = python["Chambre de combustion"].tolist()
-combustion_table = [x for x in combustion_table if pd.isnull(x) == False]
+parametrage1.combustion_table = python1["Chambre de combustion"].tolist()
+parametrage1.combustion_table = [x for x in parametrage1.combustion_table if pd.isnull(x) == False]
+parametrage2.combustion_table = python2["Chambre de combustion"].tolist()
+parametrage2.combustion_table = [x for x in parametrage2.combustion_table if pd.isnull(x) == False]
 
-turbine_table = python["Turbine"].tolist()
-turbine_table = [x for x in turbine_table if pd.isnull(x) == False]
+parametrage1.power_turbine_table = python1["Power turbine"].tolist()
+parametrage1.power_turbine_table = [x for x in parametrage1.power_turbine_table if pd.isnull(x) == False]
+parametrage2.power_turbine_table = python2["Power turbine"].tolist()
+parametrage2.power_turbine_table = [x for x in parametrage2.power_turbine_table if pd.isnull(x) == False]
 
-echangeur_table = python["Échangeur de chaleur"].tolist()
-echangeur_table = [x for x in echangeur_table if pd.isnull(x) == False]
+parametrage1.echangeur_table = python1["Échangeur de chaleur"].tolist()
+parametrage1.echangeur_table = [x for x in parametrage1.echangeur_table if pd.isnull(x) == False]
+parametrage2.echangeur_table = python2["Échangeur de chaleur"].tolist()
+parametrage2.echangeur_table = [x for x in parametrage2.echangeur_table if pd.isnull(x) == False]
+
+parametrage1.gas_generator_table = python1["Gas generator"].tolist()
+parametrage1.gas_generator_table = [x for x in parametrage1.gas_generator_table if pd.isnull(x) == False]
+parametrage2.gas_generator_table = python2["Gas generator"].tolist()
+parametrage2.gas_generator_table = [x for x in parametrage2.gas_generator_table if pd.isnull(x) == False]

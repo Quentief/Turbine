@@ -35,7 +35,7 @@ combustion = Combustion(air_entree, 0.02, 1100, 0.98)
 # combustion.far = 0.017844704373949267
 air_entree = combustion.air_sortie       # Pression : 3.92 bars | Temperature 1100.00 K
 air_sortie = Air(1,288)
-turbine = Turbine(air_entree,air_sortie.pression,0.87)     # Pression : 1.00 bars | Temperature 825.40 K
+turbine = Power_turbine(air_entree,air_sortie.pression,0.87)     # Pression : 1.00 bars | Temperature 825.40 K
 performance1 = Performance(compresseur,turbine,combustion)      # Specific power output : 151.00 kJ/kg | SFC 0.43 kg/kWh | Rendement global : 19.63 %
 print(performance1)
 
@@ -47,23 +47,20 @@ echangeur = Echangeur_chaleur(air_entree, 0.80, 0.03, 0.04, gaz_entree.temperatu
 air_entree = echangeur.air_sortie
 combustion = Combustion(air_entree, 0.02, 1100, 0.98)
 air_entree = combustion.air_sortie
-turbine = Turbine(air_entree,echangeur.gaz_entree.pression,0.87)
+turbine = Power_turbine(air_entree,echangeur.gaz_entree.pression,0.87)
 performance = Performance(compresseur,turbine,combustion)
 print(performance)
 
 
-
-def function_air_entree() :
-    for i in range(len(sequence_table)):
-        code_element = sequence_table[i]
-        print(air_entree_table[code_element])
-
-def function_air_sortie() :
-    for i in range(len(sequence_table)):
-        code_element = sequence_table[i]
-        print(air_sortie_table[code_element])
-
+# def function_air_entree() :
+#     for i in range(len(sequence_table)):
+#         code_element = sequence_table[i]
+#         print(air_entree_table[code_element])
+#
+# def function_air_sortie() :
+#     for i in range(len(sequence_table)):
+#         code_element = sequence_table[i]
+#         print(air_sortie_table[code_element])
 
 
-argument = [air_entree_table[2], combustion_table[2], combustion_table[0],
-                                         combustion_table[1]]
+def test_air(air_table) :
