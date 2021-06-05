@@ -1,6 +1,6 @@
 ########################### Import
 
-from model import proprietes_air, gamma_table, cp_table, far_bornes1A_temperature, far_bornes1B_temperature, \
+from Model.model import proprietes_air, gamma_table, cp_table, far_bornes1A_temperature, far_bornes1B_temperature, \
     far_bornes1A_far, far_bornes1B_far, far_bornes2A_temperature, far_bornes2B_temperature, far_bornes2A_far, \
     far_bornes2B_far, parametrage1, parametrage2, sequence1, sequence2
 
