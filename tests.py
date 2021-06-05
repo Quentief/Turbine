@@ -50,17 +50,3 @@ air_entree = combustion.air_sortie
 turbine = Power_turbine(air_entree,echangeur.gaz_entree.pression,0.87)
 performance = Performance(compresseur,turbine,combustion)
 print(performance)
-
-
-# def function_air_entree() :
-#     for i in range(len(sequence_table)):
-#         code_element = sequence_table[i]
-#         print(air_entree_table[code_element])
-#
-# def function_air_sortie() :
-#     for i in range(len(sequence_table)):
-#         code_element = sequence_table[i]
-#         print(air_sortie_table[code_element])
-
-
-def test_air(air_table) :

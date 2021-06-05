@@ -231,5 +231,3 @@ def start():
     affichage_console(simulation1, sequence1, "Performances cycle Séquence 1")
     pause = input("Appuyer pour affichage suivant")
     affichage_console(simulation2, sequence2, "Performances cycle Séquence 2")
-
-
