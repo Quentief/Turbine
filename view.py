@@ -1,5 +1,6 @@
 ########################### Import
 
+from colorama import Style, Fore
 
 ########################### Affichage des résultats via la console
 
@@ -40,3 +41,26 @@ def affichage_console(simulation,sequence_table,titre_sequence):
                                     simulation.air_table[code_element][1].temperature, travail ) )
     print("")
     print(simulation.performance)
+
+
+def couleur(x):
+    x = round(x,2)
+    if x < 0:
+        return Fore.RED + "Perte : " + str(x*100) + " %" + Style.RESET_ALL
+    else:
+        return Fore.GREEN + "Gain : " + str(x*100) + " %" + Style.RESET_ALL
+
+
+def affichage_comparaison(simulation1,simulation2):
+    dash = "-" * 99
+    print(dash)
+    print("{:^50}".format("Bilan".upper()))
+    print(dash)
+    SPO_compare = couleur( (simulation2.performance.puissance_specifique_sortie
+            - simulation1.performance.puissance_specifique_sortie) / simulation1.performance.puissance_specifique_sortie )
+    SFC_compare = couleur( (simulation2.performance.sfc - simulation1.performance.sfc) / simulation1.performance.sfc )
+    rendement_compare = couleur( (simulation2.performance.rendement
+                         - simulation1.performance.rendement) / simulation1.performance.rendement )
+    print("{:<31s}{:>10s}".format("Specific Power Output", SPO_compare))
+    print("{:<31s}{:>10s}".format("Specific Fuel Consumption", SFC_compare))
+    print("{:<31s}{:>10s}".format("Rendement", rendement_compare))

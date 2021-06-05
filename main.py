@@ -2,10 +2,10 @@
 
 # pip install pandas
 # pip install openpyxl
+# pip install colorama
 
 
 from controller import start
 
 if __name__ == '__main__':
     start()
-

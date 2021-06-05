@@ -4,7 +4,7 @@ from model import proprietes_air, gamma_table, cp_table, far_bornes1A_temperatur
     far_bornes1A_far, far_bornes1B_far, far_bornes2A_temperature, far_bornes2B_temperature, far_bornes2A_far, \
     far_bornes2B_far, parametrage1, parametrage2, sequence1, sequence2
 
-from view import affichage_console
+from view import affichage_console, affichage_comparaison
 
 import bisect as bis
 
@@ -226,8 +226,23 @@ class Simulation :
 
 
 def start():
-    simulation1 = Simulation(sequence1,parametrage1)
-    simulation2 = Simulation(sequence2, parametrage2)
-    affichage_console(simulation1, sequence1, "Performances cycle Séquence 1")
-    pause = input("Appuyer pour affichage suivant")
-    affichage_console(simulation2, sequence2, "Performances cycle Séquence 2")
+    comparaison_on = 1
+    try :
+        simulation1 = Simulation(sequence1,parametrage1)
+        affichage_console(simulation1, sequence1, "Performances cycle Séquence 1")
+    except :
+        print("Pas de Séquence 1")
+        comparaison_on = 0
+    if comparaison_on == 1 :
+        pause = input("Appuyer pour passer à l'affichage suivant")
+    try :
+        simulation2 = Simulation(sequence2,parametrage2)
+        affichage_console(simulation2, sequence2, "Performances cycle Séquence 2")
+    except :
+        print("Pas de Séquence 2")
+        comparaison_on = 0
+    print(comparaison_on)
+    if comparaison_on == 1:
+        pause = input("Appuyer pour passer à l'affichage suivant")
+    if comparaison_on == 1 :
+        affichage_comparaison(simulation1,simulation2)
