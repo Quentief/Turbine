@@ -5,7 +5,7 @@
 # pip install colorama
 
 
-from controller import start
+from ViewController.controller import start
 
 if __name__ == '__main__':
     start()
