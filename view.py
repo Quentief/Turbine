@@ -62,7 +62,7 @@ def couleur2(x):
 def affichage_comparaison(simulation1,simulation2):
     dash = "-" * 99
     print(dash)
-    print("{:^50}".format("Bilan".upper()))
+    print("{:^50}".format("Bilan : Évolution cycle 2 par rapport au cycle 1".upper()))
     print(dash)
     SPO_compare = couleur( (simulation2.performance.puissance_specifique_sortie
             - simulation1.performance.puissance_specifique_sortie) / simulation1.performance.puissance_specifique_sortie )
