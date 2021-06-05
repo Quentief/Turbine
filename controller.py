@@ -44,7 +44,6 @@ class Air:
             return cp_table[temperatureA] + (cp_table[temperatureB] - cp_table[temperatureA]) / (temperatureB
                                                                     - temperatureA) * (temperature - temperatureA)
 
-
 ########################### Modélisation des composants
 
 class Compresseur:
@@ -212,7 +211,7 @@ class Simulation :
                     air_entree_table[sequence_table[j + 1]] = air_sortie_element
                 #print(air_sortie_table[code_element])
             air_table = {}
-        for k in air_entree_table.keys():           # Fusion de air_entree et air_sortie
+        for k in sequence_table:           # Fusion de air_entree et air_sortie
             air_table[k] = (air_entree_table[k],air_sortie_table[k])
         if 5.2 in sequence_table :      # Permet de distinguer le cas où la power turbine n'alimente pas
                                         # le compresseur (Gas Generator : travail_extrait_turbine = 0)
