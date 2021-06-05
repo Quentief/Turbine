@@ -24,14 +24,14 @@ def affichage_console(simulation,sequence_table,titre_sequence):
             element = "Power turbine"
             travail = simulation.performance.travail_turbine
         elif code_element == 4.1 :
-            element = "EC - coté air frais"
+            element = "Echangeur chaleur - air frais"
         elif code_element == 4.2 :
-            element = "EC - coté gaz chauds"
+            element = "Echangeur chaleur - gaz chauds"
         elif code_element == 5.1 :
-            element = "GG - compresseur"
+            element = "Gas generator - compresseur"
             travail = -simulation.performance.travail_compresseur
         elif code_element == 5.2 :
-            element = "GG - turbine"
+            element = "Gas generator - turbine"
             travail = simulation.performance.travail_compresseur
         if travail == "" :
             print("{:<30s}{:>10.2f} bar {:>24.2f} K {:>20}".format( element, simulation.air_table[code_element][1].pression,
