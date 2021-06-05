@@ -50,6 +50,14 @@ def couleur(x):
     else:
         return Fore.GREEN + "Gain : " + str(x*100) + " %" + Style.RESET_ALL
 
+def couleur2(x):
+    x = round(x,2)
+    if x > 0:
+        return Fore.RED + "Perte : " + str(x*100) + " %" + Style.RESET_ALL
+    else:
+        return Fore.GREEN + "Gain : " + str(x*100) + " %" + Style.RESET_ALL
+
+
 
 def affichage_comparaison(simulation1,simulation2):
     dash = "-" * 99
@@ -58,7 +66,7 @@ def affichage_comparaison(simulation1,simulation2):
     print(dash)
     SPO_compare = couleur( (simulation2.performance.puissance_specifique_sortie
             - simulation1.performance.puissance_specifique_sortie) / simulation1.performance.puissance_specifique_sortie )
-    SFC_compare = couleur( (simulation2.performance.sfc - simulation1.performance.sfc) / simulation1.performance.sfc )
+    SFC_compare = couleur2( (simulation2.performance.sfc - simulation1.performance.sfc) / simulation1.performance.sfc )
     rendement_compare = couleur( (simulation2.performance.rendement
                          - simulation1.performance.rendement) / simulation1.performance.rendement )
     print("{:<31s}{:>10s}".format("Specific Power Output", SPO_compare))

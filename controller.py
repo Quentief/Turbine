@@ -241,7 +241,6 @@ def start():
     except :
         print("Pas de Séquence 2")
         comparaison_on = 0
-    print(comparaison_on)
     if comparaison_on == 1:
         pause = input("Appuyer pour passer à l'affichage suivant")
     if comparaison_on == 1 :
