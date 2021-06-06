@@ -151,6 +151,7 @@ class Simulation :
             parametrage.combustion_table, parametrage.power_turbine_table, parametrage.echangeur_table, parametrage.gas_generator_table)
         self.performance = performance
         self.air_table = air_table
+        self.sequence = sequence_table
     def __str__(self):
         return "Specific Power Output : {:.2f} kJ/kg | Specific Fuel Consumption {:.2f} kg/kWh " \
                "| Efficiency : {:.2f} % ".format(self.performance.puissance_specifique_sortie,
@@ -232,7 +233,7 @@ def start():
     comparaison_on = 1
     try :
         simulation1 = Simulation(sequence1,parametrage1)
-        affichage_console(simulation1, sequence1, "Performances cycle Séquence 1")
+        affichage_console(simulation1, "Performances cycle Séquence 1")
     except :
         simulation1 = "Pas de Séquence 1"
         print(simulation1)
@@ -241,7 +242,7 @@ def start():
         pause = input("Appuyer pour passer à l'affichage suivant")
     try :
         simulation2 = Simulation(sequence2,parametrage2)
-        affichage_console(simulation2, sequence2, "Performances cycle Séquence 2")
+        affichage_console(simulation2, "Performances cycle Séquence 2")
     except :
         simulation2 = "Pas de Séquence 2"
         print(simulation2)

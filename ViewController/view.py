@@ -5,7 +5,8 @@ from colorama import Style, Fore
 ########################### Affichage des résultats via la console
 
 
-def affichage_console(simulation,sequence_table,titre_sequence):
+def affichage_console(simulation,titre_sequence):
+    sequence_table = simulation.sequence
     dash = "-" * 99
     print(dash)
     print("{:^50}".format(titre_sequence.upper()))
