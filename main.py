@@ -4,6 +4,8 @@
 # pip install openpyxl
 # pip install colorama
 
+# pip install -r requirements.txt
+
 
 from ViewController.controller import start
 
