@@ -2,7 +2,7 @@
 
 from Model.model import proprietes_air, gamma_table, cp_table, far_bornes1A_temperature, far_bornes1B_temperature, \
     far_bornes1A_far, far_bornes1B_far, far_bornes2A_temperature, far_bornes2B_temperature, far_bornes2A_far, \
-    far_bornes2B_far, parametrage1, parametrage2, sequence1, sequence2
+    far_bornes2B_far, parametrage1, parametrage2, sequence1, sequence2, sequence_nom
 
 from ViewController.view import affichage_console, affichage_comparaison
 
@@ -146,12 +146,13 @@ class Repeteur():
 
 
 class Simulation :
-    def __init__(self, sequence_table, parametrage):
+    def __init__(self, sequence_table, parametrage, titre):
         performance, air_table = self.auto_sequence(sequence_table, parametrage.air_exterieur_table, parametrage.compresseur_table,
             parametrage.combustion_table, parametrage.power_turbine_table, parametrage.echangeur_table, parametrage.gas_generator_table)
         self.performance = performance
         self.air_table = air_table
         self.sequence = sequence_table
+        self.titre = titre
     def __str__(self):
         return "Specific Power Output : {:.2f} kJ/kg | Specific Fuel Consumption {:.2f} kg/kWh " \
                "| Efficiency : {:.2f} % ".format(self.performance.puissance_specifique_sortie,
@@ -232,8 +233,8 @@ class Simulation :
 def start():
     comparaison_on = 1
     try :
-        simulation1 = Simulation(sequence1,parametrage1)
-        affichage_console(simulation1, "Performances cycle Séquence 1")
+        simulation1 = Simulation(sequence1,parametrage1,sequence_nom[0])
+        affichage_console(simulation1, sequence_nom[0])
     except :
         simulation1 = "Pas de Séquence 1"
         print(simulation1)
@@ -241,8 +242,8 @@ def start():
     if comparaison_on == 1 :
         pause = input("Appuyer pour passer à l'affichage suivant")
     try :
-        simulation2 = Simulation(sequence2,parametrage2)
-        affichage_console(simulation2, "Performances cycle Séquence 2")
+        simulation2 = Simulation(sequence2,parametrage2,sequence_nom[1])
+        affichage_console(simulation2, sequence_nom[0])
     except :
         simulation2 = "Pas de Séquence 2"
         print(simulation2)
@@ -250,5 +251,5 @@ def start():
     if comparaison_on == 1:
         pause = input("Appuyer pour passer à l'affichage suivant")
     if comparaison_on == 1 :
-        affichage_comparaison(simulation1,simulation2)
+        affichage_comparaison(simulation1,sequence_nom[0],simulation2,sequence_nom[1])
     return simulation1,simulation2

@@ -34,10 +34,12 @@ parametrage2 = Parametrage()
 
 interface_xl = 'Interface.xlsx'
 user = pd.read_excel(interface_xl, sheet_name="user")
+sequence_nom = user.keys().tolist()
+sequence_nom.remove("Nom cycles")
 
-sequence1 = user["Séquence 1"].tolist()
+sequence1 = user[sequence_nom[0]].tolist()
 sequence1 = [x for x in sequence1 if pd.isnull(x) == False]      # Supprimer les nan de la liste
-sequence2 = user["Séquence 2"].tolist()
+sequence2 = user[sequence_nom[1]].tolist()
 sequence2 = [x for x in sequence2 if pd.isnull(x) == False]
 
 python1 = pd.read_excel(interface_xl, sheet_name="python 1")

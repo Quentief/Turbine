@@ -9,7 +9,7 @@ def affichage_console(simulation,titre_sequence):
     sequence_table = simulation.sequence
     dash = "-" * 99
     print(dash)
-    print("{:^50}".format(titre_sequence.upper()))
+    print("{:^25}{:^5}".format("PERFORMANCES :",titre_sequence.upper()))
     print("")
     print('{:<31s}{:>13s}{:>27s}{:>27s}'.format("Composant", "Pression", "Température", "Travail"))
     print(dash)
@@ -60,10 +60,10 @@ def couleur2(x):
 
 
 
-def affichage_comparaison(simulation1,simulation2):
+def affichage_comparaison(simulation1,titre1,simulation2,titre2):
     dash = "-" * 99
     print(dash)
-    print("{:^50}".format("Bilan : Évolution cycle 2 par rapport au cycle 1".upper()))
+    print("{}  {}  {}  {}".format("BILAN :",titre1.upper(),"PAR RAPPORT À",titre2.upper()))
     print(dash)
     SPO_compare = couleur( (simulation2.performance.puissance_specifique_sortie
             - simulation1.performance.puissance_specifique_sortie) / simulation1.performance.puissance_specifique_sortie )
