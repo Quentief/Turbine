@@ -47,13 +47,17 @@ class Air:
 ########################### Modélisation des composants
 
 class Compresseur:
-    def __init__(self,air_entree, r, NC, NM, cp):
+    def __init__(self, air_entree, r, NM, NI, NP, cp, gamma):
         self.air_entree = air_entree
-        self.air_sortie = Air(r*self.air_entree.pression,
-                              self.calcul_temperature_sortie(self.air_entree.gamma,self.air_entree.temperature,NC,r))
-        self.travail = self.calcul_travail(cp, self.air_entree.temperature, self.air_sortie.temperature, NM)
-    def calcul_temperature_sortie(self,gamma,Ta,NC,r):
-        return Ta + Ta/NC * ( r**( (gamma - 1)/gamma) - 1)
+        self.air_sortie = Air(r * self.air_entree.pression,
+                              self.calcul_temperature_sortie(air_entree, gamma, r, NI, NP))
+        self.travail = self.calcul_travail(cp, air_entree.temperature, self.air_sortie.temperature, NM)
+    def calcul_temperature_sortie(self, air_entree, gamma, r, NI, NP):
+        Ta = air_entree.temperature
+        if NP == 0 :
+            return Ta + Ta/NI * ( r**( (gamma - 1)/gamma) - 1)
+        else :
+            return Ta*r**( (gamma-1)/(gamma*NP) )
     def calcul_travail(self, cp, Ta, T2, NM):
         return cp*(T2 - Ta)/NM
 
@@ -80,32 +84,32 @@ class Combustion:
 
 
 class Power_turbine:
-    def __init__(self,air_entree,pression_sortie,NT,NM,dPt,cp):
+    def __init__(self, air_entree, pression_sortie, NM, NI, NP, dPt, cp, gamma):
         self.air_entree = air_entree
-        self.air_sortie = self.calcul_air_sortie(air_entree, pression_sortie, NT, dPt)
-        self.travail = self.calcul_travail(air_entree, self.air_sortie.temperature,NM,cp)
+        self.air_sortie = self.calcul_air_sortie(air_entree, pression_sortie, gamma, NI, NP, dPt)
+        self.travail = self.calcul_travail(air_entree, self.air_sortie.temperature, NM, cp)
         self.dPt = dPt
-    def calcul_air_sortie(self,air_entree,P4,NT,dPt):
+    def calcul_air_sortie(self, air_entree, P4, gamma, NI, NP, dPt):
         T3 = air_entree.temperature
         P3 = air_entree.pression
-        gamma = air_entree.gamma
-        T4 = T3 * (1 - NT*(1 - ((P4 + dPt)/P3)**((gamma-1)/gamma)) )
-        return Air(P4,T4)
-    def calcul_travail(self, air_entree, T4,NM,cp):
+        if NP == 0 :
+            T4 = T3 * (1 - NI * (1 - ((P4 + dPt) / P3) ** ((gamma - 1) / gamma)))
+            return Air(P4,T4)
+    def calcul_travail(self, air_entree, T4, NM, cp):
         T3 = air_entree.temperature
         return cp*(T3 - T4)*NM
 
 
 class Gas_generator_turbine :
-    def __init__(self, air_entree, compresseur,NT,cp) :
+    def __init__(self, air_entree, compresseur, NI, NP, cp, gamma) :
         self.air_entree = air_entree
         self.compresseur = compresseur
-        self.air_sortie = self.calcul_air_sortie(air_entree,compresseur,NT,cp)
-    def calcul_air_sortie(self,air_entree,compresseur,NT,cp):
+        self.air_sortie = self.calcul_air_sortie(air_entree, self.compresseur, NI, NP, cp, gamma)
+    def calcul_air_sortie(self, air_entree, compresseur, NI, NP, cp, gamma):
         T3 = air_entree.temperature
         T4 = T3 - compresseur.travail/cp
-        exposant = air_entree.gamma / (air_entree.gamma -1)
-        P4 = air_entree.pression*( 1 - (T3-T4)/(NT*T3) )**exposant
+        if NP == 0 :
+            P4 = air_entree.pression*( 1 - (T3-T4)/(NI*T3) )**( gamma / (gamma -1) )
         return Air(P4,T4)
 
 
@@ -173,23 +177,25 @@ class Simulation :
             #print(i)
             for j in range(len(sequence_table)):
                 code_element = sequence_table[j]
-                #print(air_entree_table[code_element])
-                #print(code_element)
+                # print(air_entree_table[code_element])
+                # print(code_element)
                 if i == 0 :
                     cp = air_entree_table[code_element].cp
+                    gamma = air_entree_table[code_element].gamma
                 else :
                     cp = (air_entree_table[code_element].cp + air_sortie_table[code_element].cp) / 2
+                    gamma = (air_entree_table[code_element].gamma + air_sortie_table[code_element].gamma) / 2
                 if code_element == 1 :
-                    compresseur = Compresseur(air_entree_table[1], compresseur_table[0], compresseur_table[2],
-                                          compresseur_table[1],cp)
+                    compresseur = Compresseur(air_entree_table[1], compresseur_table[0],
+                                              compresseur_table[1], compresseur_table[2], compresseur_table[3], cp, gamma)
                     air_sortie_element = compresseur.air_sortie
                 elif code_element == 2:
                     combustion = Combustion(air_entree_table[2], combustion_table[2], combustion_table[0],
                                          combustion_table[1])
                     air_sortie_element = combustion.air_sortie
                 elif code_element == 3 :
-                    power_turbine = Power_turbine(air_entree_table[3],air_sortie_table[3].pression,power_turbine_table[1],
-                                                  power_turbine_table[0],power_turbine_table[2],cp)
+                    power_turbine = Power_turbine(air_entree_table[3], air_sortie_table[3].pression, power_turbine_table[0],
+                                        power_turbine_table[1], power_turbine_table[2], power_turbine_table[3], cp, gamma)
                     air_sortie_element = power_turbine.air_sortie
                     if i == 0 :
                         air_sortie_element.pression += power_turbine.dPt
@@ -206,22 +212,23 @@ class Simulation :
                             air_sortie_element = echangeur.gaz_entree
                             air_sortie_table[sequence_table[j-1]] = air_sortie_element
                 elif code_element == 5.1 :
-                    compresseur = Compresseur(air_entree_table[code_element],gas_generator_table[0],
-                                              gas_generator_table[2],gas_generator_table[1],cp)
-                    air_sortie_element = compresseur.air_sortie
+                    gas_generator_compresseur = Compresseur(air_entree_table[5.1], gas_generator_table[0], gas_generator_table[1],
+                                              gas_generator_table[2], gas_generator_table[3], cp, gamma)
+                    air_sortie_element = gas_generator_compresseur.air_sortie
                 elif code_element == 5.2 :
-                    gas_generator_turbine = Gas_generator_turbine(air_entree_table[5.2],compresseur,gas_generator_table[3],cp)
+                    gas_generator_turbine = Gas_generator_turbine(air_entree_table[5.2], gas_generator_compresseur,
+                                            gas_generator_table[4], gas_generator_table[5], cp, gamma)
                     air_sortie_element = gas_generator_turbine.air_sortie
                 if j < len(sequence_table) - 1 :
                     air_sortie_table[code_element] = air_sortie_element
                     air_entree_table[sequence_table[j + 1]] = air_sortie_element
-                #print(air_sortie_table[code_element])
+                # print(air_sortie_table[code_element])
             air_table = {}
         for k in sequence_table:           # Fusion de air_entree et air_sortie
             air_table[k] = (air_entree_table[k],air_sortie_table[k])
         if 5.2 in sequence_table :      # Permet de distinguer le cas où la power turbine n'alimente pas
                                         # le compresseur (Gas Generator : travail_extrait_turbine = 0)
-            performance = Performance(compresseur, power_turbine, combustion,0)
+            performance = Performance(gas_generator_compresseur, power_turbine, combustion,0)
         else :
             performance = Performance(compresseur, power_turbine, combustion, compresseur.travail)
         #print(compresseur.travail)
