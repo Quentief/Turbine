@@ -95,6 +95,8 @@ class Power_turbine:
         if NP == 0 :
             T4 = T3 * (1 - NI * (1 - ((P4 + dPt) / P3) ** ((gamma - 1) / gamma)))
             return Air(P4,T4)
+        else :
+            return T3*(P4/P3)**( NP*(gamma-1)/gamma )
     def calcul_travail(self, air_entree, T4, NM, cp):
         T3 = air_entree.temperature
         return cp*(T3 - T4)*NM
@@ -185,6 +187,7 @@ class Simulation :
                 else :
                     cp = (air_entree_table[code_element].cp + air_sortie_table[code_element].cp) / 2
                     gamma = (air_entree_table[code_element].gamma + air_sortie_table[code_element].gamma) / 2
+                # print(gamma)
                 if code_element == 1 :
                     compresseur = Compresseur(air_entree_table[1], compresseur_table[0],
                                               compresseur_table[1], compresseur_table[2], compresseur_table[3], cp, gamma)
