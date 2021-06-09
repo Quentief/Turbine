@@ -5,11 +5,11 @@ from colorama import Style, Fore
 ########################### Affichage des résultats via la console
 
 
-def affichage_console(simulation,titre_sequence):
+def affichage_console(simulation):
     sequence_table = simulation.sequence
     dash = "-" * 99
     print(dash)
-    print("{:^25}{:^5}".format("PERFORMANCES :",titre_sequence.upper()))
+    print("{:^25}{:^5}".format("PERFORMANCES :",simulation.titre.upper()))
     print("")
     print('{:<31s}{:>13s}{:>27s}{:>27s}'.format("Composant", "Pression", "Température", "Travail"))
     print(dash)
@@ -18,22 +18,22 @@ def affichage_console(simulation,titre_sequence):
         travail = ""
         if code_element == 1:
             element = "Compresseur"
-            travail = -simulation.performance.travail_compresseur
+            travail = simulation.travail[1]
         elif code_element == 2:
             element = "Chambre combustion"
         elif code_element == 3:
             element = "Power turbine"
-            travail = simulation.performance.travail_turbine
+            travail = simulation.travail[3]
         elif code_element == 4.1 :
             element = "Echangeur chaleur - air frais"
         elif code_element == 4.2 :
             element = "Echangeur chaleur - gaz chauds"
         elif code_element == 5.1 :
             element = "Gas generator - compresseur"
-            travail = -simulation.performance.travail_compresseur
+            travail = simulation.travail[5.1]
         elif code_element == 5.2 :
             element = "Gas generator - turbine"
-            travail = simulation.performance.travail_compresseur
+            travail = simulation.travail[5.2]
         if travail == "" :
             print("{:<30s}{:>10.2f} bar {:>24.2f} K {:>20}".format( element, simulation.air_table[code_element][1].pression,
                                     simulation.air_table[code_element][1].temperature, travail ) )

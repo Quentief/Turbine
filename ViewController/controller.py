@@ -103,13 +103,13 @@ class Power_turbine:
 
 
 class Gas_generator_turbine :
-    def __init__(self, air_entree, compresseur, NI, NP, cp, gamma) :
+    def __init__(self, air_entree, travail, NI, NP, cp, gamma) :
         self.air_entree = air_entree
-        self.compresseur = compresseur
-        self.air_sortie = self.calcul_air_sortie(air_entree, self.compresseur, NI, NP, cp, gamma)
-    def calcul_air_sortie(self, air_entree, compresseur, NI, NP, cp, gamma):
+        self.travail = travail
+        self.air_sortie = self.calcul_air_sortie(air_entree, travail, NI, NP, cp, gamma)
+    def calcul_air_sortie(self, air_entree, travail, NI, NP, cp, gamma):
         T3 = air_entree.temperature
-        T4 = T3 - compresseur.travail/cp
+        T4 = T3 - travail/cp
         if NP == 0 :
             P4 = air_entree.pression*( 1 - (T3-T4)/(NI*T3) )**( gamma / (gamma -1) )
         return Air(P4,T4)
@@ -131,10 +131,8 @@ class Echangeur_chaleur :
 
 
 class Performance :
-    def __init__(self,compresseur,turbine,combustion,travail_extrait_turbine):
-        self.travail_compresseur = compresseur.travail
-        self.travail_turbine = turbine.travail
-        self.puissance_specifique_sortie = turbine.travail - travail_extrait_turbine
+    def __init__(self,combustion,travail):
+        self.puissance_specifique_sortie = sum(travail.values())
         self.sfc = 3600*combustion.far / (self.puissance_specifique_sortie)       # SFC = spécific fuel consumption
         self.rendement = 3600 / (self.sfc*43100)      # 43 100 kJ/kg = PCI du kérosène
     def __str__(self):
@@ -153,10 +151,12 @@ class Repeteur():
 
 class Simulation :
     def __init__(self, sequence_table, parametrage, titre):
-        performance, air_table = self.auto_sequence(sequence_table, parametrage.air_exterieur_table, parametrage.compresseur_table,
-            parametrage.combustion_table, parametrage.power_turbine_table, parametrage.echangeur_table, parametrage.gas_generator_table)
+        performance, air_table, travail = self.auto_sequence(sequence_table, parametrage.air_exterieur_table,
+                parametrage.compresseur_table, parametrage.combustion_table, parametrage.power_turbine_table,
+                                            parametrage.echangeur_table, parametrage.gas_generator_table)
         self.performance = performance
         self.air_table = air_table
+        self.travail = travail
         self.sequence = sequence_table
         self.titre = titre
     def __str__(self):
@@ -165,6 +165,7 @@ class Simulation :
                                                  self.performance.sfc,self.performance.rendement*100)
     def auto_sequence(self, sequence_table, air_exterieur_table, compresseur_table, combustion_table, power_turbine_table,
                       echangeur_table, gas_generator_table) :
+        travail = {}
         air_entree_table = {i: 0 for i in sequence_table}
         air_sortie_table = {i: 0 for i in sequence_table}
         air_entree_table[sequence_table[0]] = Air(air_exterieur_table[0], air_exterieur_table[1])
@@ -176,7 +177,7 @@ class Simulation :
             air_entree_table[sequence_sans_EC[0]] = Air(air_exterieur_table[0], air_exterieur_table[1])
             air_sortie_table[sequence_sans_EC[-1]] = Air(air_exterieur_table[0], air_exterieur_table[1])
         for i in range(100) :
-            #print(i)
+            # print(i)
             for j in range(len(sequence_table)):
                 code_element = sequence_table[j]
                 # print(air_entree_table[code_element])
@@ -192,6 +193,7 @@ class Simulation :
                     compresseur = Compresseur(air_entree_table[1], compresseur_table[0],
                                               compresseur_table[1], compresseur_table[2], compresseur_table[3], cp, gamma)
                     air_sortie_element = compresseur.air_sortie
+                    travail[1] = -compresseur.travail
                 elif code_element == 2:
                     combustion = Combustion(air_entree_table[2], combustion_table[2], combustion_table[0],
                                          combustion_table[1])
@@ -200,6 +202,7 @@ class Simulation :
                     power_turbine = Power_turbine(air_entree_table[3], air_sortie_table[3].pression, power_turbine_table[0],
                                         power_turbine_table[1], power_turbine_table[2], power_turbine_table[3], cp, gamma)
                     air_sortie_element = power_turbine.air_sortie
+                    travail[3] = power_turbine.travail
                     if i == 0 :
                         air_sortie_element.pression += power_turbine.dPt
                 elif code_element == 4.1 or code_element == 4.2 :
@@ -218,10 +221,12 @@ class Simulation :
                     gas_generator_compresseur = Compresseur(air_entree_table[5.1], gas_generator_table[0], gas_generator_table[1],
                                               gas_generator_table[2], gas_generator_table[3], cp, gamma)
                     air_sortie_element = gas_generator_compresseur.air_sortie
+                    travail[5.1] = -gas_generator_compresseur.travail
                 elif code_element == 5.2 :
-                    gas_generator_turbine = Gas_generator_turbine(air_entree_table[5.2], gas_generator_compresseur,
+                    gas_generator_turbine = Gas_generator_turbine(air_entree_table[5.2], -travail[5.1],
                                             gas_generator_table[4], gas_generator_table[5], cp, gamma)
                     air_sortie_element = gas_generator_turbine.air_sortie
+                    travail[5.2] = gas_generator_turbine.travail
                 if j < len(sequence_table) - 1 :
                     air_sortie_table[code_element] = air_sortie_element
                     air_entree_table[sequence_table[j + 1]] = air_sortie_element
@@ -229,22 +234,16 @@ class Simulation :
             air_table = {}
         for k in sequence_table:           # Fusion de air_entree et air_sortie
             air_table[k] = (air_entree_table[k],air_sortie_table[k])
-        if 5.2 in sequence_table :      # Permet de distinguer le cas où la power turbine n'alimente pas
-                                        # le compresseur (Gas Generator : travail_extrait_turbine = 0)
-            performance = Performance(gas_generator_compresseur, power_turbine, combustion,0)
-        else :
-            performance = Performance(compresseur, power_turbine, combustion, compresseur.travail)
-        #print(compresseur.travail)
-        #print(power_turbine.travail)
-        #print(performance)
-        return performance,air_table
+        print(travail)
+        performance = Performance(combustion, travail)
+        return performance,air_table,travail
 
 
 def start():
     comparaison_on = 1
     try :
         simulation1 = Simulation(sequence1,parametrage1,sequence_nom[0])
-        affichage_console(simulation1, sequence_nom[0])
+        affichage_console(simulation1)
     except :
         simulation1 = "Pas de Séquence 1"
         print(simulation1)
@@ -253,7 +252,7 @@ def start():
         pause = input("Appuyer pour passer à l'affichage suivant")
     try :
         simulation2 = Simulation(sequence2,parametrage2,sequence_nom[1])
-        affichage_console(simulation2, sequence_nom[0])
+        affichage_console(simulation2)
     except :
         simulation2 = "Pas de Séquence 2"
         print(simulation2)
